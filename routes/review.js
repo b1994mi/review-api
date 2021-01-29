@@ -6,7 +6,7 @@ const {
   , getAllReview
   , getReviewById
   , updateReviewById
-} = require("../controllers/reviewControllers");
+} = require("../controllers/review");
 
 Router.route("/")
   .get(getAllReview)
