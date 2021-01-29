@@ -1,22 +1,28 @@
-const fs = require("fs");
-const Review = require("../models/reviewModels");
+// const fs = require("fs");
+// const Review = require("../models/reviewModels");
 
-const { sendResponse, convertImagesBuffer } = require("../helpers/index");
+const { Reviews, Images } = require("../models")
+const { Op } = require("sequelize");
+
+const { sendResponse } = require("../helpers/index");
 
 module.exports = {
   createReview: async (req, res) => {
     try {
-      const image = convertImagesBuffer(req.files);
-      const { name, review_comment, review_star } = req.body;
-      const newReview = { name, review_comment, review_star, image };
-      const review = new Review(newReview);
 
-      await review.save().then(result => {
-        sendResponse(res, 200, {
-          id: result._id,
-          msg: "Review has been created"
+// Di sini jelas bahwa validator akan cek apakah request punya files
+// berupa array dan apakah array lebih dari 4 isinya.
+
+      const data = await Reviews.create(req.body)
+      let dataimg;
+      if (req.files.length > 0) {
+        req.files.forEach(element => {
+          element.review_id = data.id
         });
-      });
+        dataimg = await Images.bulkCreate(req.files)
+      }
+
+      sendResponse(res, 200, [data, dataimg])
     } catch (error) {
       sendResponse(res, 500, { error });
     }
@@ -24,49 +30,58 @@ module.exports = {
 
   getAllReview: async (req, res) => {
     try {
-      await Review.find()
-        .exec()
-        .then(result => {
-          sendResponse(res, 200, result);
-        });
+      const data = await Reviews.findAll({
+        include: { model: Images }
+      })
+      sendResponse(res, 200, data)
     } catch (error) {
       sendResponse(res, 500, { error });
     }
   },
 
   getReviewById: async (req, res) => {
+
+    // Di sini perlu validator sederhana apakah review dgn id tsb ada
+    // di db atau tidak
+
     try {
       const id = req.params.id;
-
-      await Review.findById(id, (err, result) => {
-        if (err) sendResponse(res, 500, { err });
-        sendResponse(res, 200, result);
-      });
+      const data = await Reviews.findByPk(id, { include: Images })
+      sendResponse(res, 200, data);
     } catch (error) {
       sendResponse(res, 500, { error });
     }
   },
 
   updateReviewById: async (req, res) => {
-    try {
-      const id = req.params.id;
-      const image = convertImagesBuffer(req.files);
-      const { name, review_comment, review_star } = req.body;
-      const newReview = {
-        name,
-        review_comment,
-        review_star,
-        image,
-        updated_at: Date.now()
-      };
 
-      await Review.findByIdAndUpdate(id, newReview, (err, result) => {
-        if (err) sendResponse(res, 500, { err });
-        sendResponse(res, 200, {
-          id: result._id,
-          msg: "Review has been updated"
+// Ini perlu validator yang cek Reviews.findAll({include: { model: Images }})
+// supaya tau apakah review itu total image akan melebihi 4 atau tidak
+
+    try {
+      const id = req.params.id
+      const data = await Reviews.update(req.body, {
+        where: {
+          id: id
+        }
+      })
+      if (req.body.images_toBeDeleted) {
+        const hasil = await Images.destroy({
+          where: {
+            id: { [Op.or]: req.body.images_toBeDeleted }
+            , review_id: id
+          }
+        })
+        console.log(hasil)
+      }
+      if (req.files.length > 0) {
+        req.files.forEach(element => {
+          element.review_id = id
         });
-      });
+        const dataimg = await Images.bulkCreate(req.files)
+        console.log(dataimg)
+      }
+      sendResponse(res, 200, data)
     } catch (error) {
       sendResponse(res, 500, { error });
     }
@@ -75,13 +90,8 @@ module.exports = {
   deleteReviewById: async (req, res) => {
     try {
       const id = req.params.id;
-
-      await Review.findByIdAndDelete(id).then(result => {
-        sendResponse(res, 200, {
-          id: result._id,
-          msg: "Review has been deleted"
-        });
-      });
+      // INGAT, REVIEW HARUS DIHAPUS BARENGAN DGN IMAGES JUGA
+      sendResponse(res, 200, data)
     } catch (error) {
       sendResponse(res, 500, { error });
     }
