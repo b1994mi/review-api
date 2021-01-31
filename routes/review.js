@@ -6,6 +6,7 @@ const {
   , getAllReview
   , getReviewById
   , updateReviewById
+  , deleteReviewById
 } = require("../controllers/review");
 
 Router.route("/")
@@ -15,6 +16,6 @@ Router.route("/")
 Router.route("/:id")
   .get(getReviewById)
   .patch(updateReviewById)
-//   .delete(deleteReviewById);
+  .delete(deleteReviewById);
 
 module.exports = Router;
