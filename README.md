@@ -13,7 +13,7 @@ I will deploy it soon on Heroku.
 | `/review/`    | GET    | Get all review datas  |                                                                  |
 | `/review/:id` | GET    | Get review data by Id  |                                                                  |
 | `/review/`    | POST   | Create new review data, using formdata | `name` (String, required), `review_comment` (String, required) , `review_star` (Number, required, 1 - 5) , `images : file_upload` (File, optional, max 4 files) |
-| `/review/:id` | PATCH  | Update review by id    | `name` (String, optional), `review_comment` (String, optional) , `review_star` (Number, optional,  1 - 5) , `images : file_upload` (File, optional, max 4 stored in db), `images_toBeDeleted` (Number || Number[], optional, contains the id of Images to be deleted and can be an array of numbers) |
+| `/review/:id` | PATCH  | Update review by id    | `name` (String, optional), `review_comment` (String, optional) , `review_star` (Number, optional,  1 - 5) , `images : file_upload` (File, optional, max 4 stored in db), `images_toBeDeleted` (Number[], optional, contains the id of Images to be deleted and can be an array of numbers) |
 | `/review/:id` | DELETE | Delete review by id    |                                                                  |
 
 ## About Endpoint
