@@ -2,6 +2,14 @@ const express = require("express");
 const Router = express.Router();
 
 const {
+  validate
+  , createReviewValidator
+  , updateReviewByIdValidator
+  , getReviewByIdValidator
+  , deleteReviewByIdValidator
+} = require('../middlewares/reviewValidator')
+
+const {
   createReview
   , getAllReview
   , getReviewById
@@ -11,11 +19,11 @@ const {
 
 Router.route("/")
   .get(getAllReview)
-  .post(createReview);
+  .post(createReviewValidator, validate, createReview);
 
 Router.route("/:id")
-  .get(getReviewById)
-  .patch(updateReviewById)
-  .delete(deleteReviewById);
+  .get(getReviewByIdValidator, validate, getReviewById)
+  .patch(updateReviewByIdValidator, validate, updateReviewById)
+  .delete(deleteReviewByIdValidator, validate, deleteReviewById);
 
 module.exports = Router;
