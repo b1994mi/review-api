@@ -16,7 +16,7 @@ var upload = multer({
 const PORT = process.env.PORT || 5000;
 const app = express();
 const reviewRoute = require("./routes/review");
-// const { sequelize } = require('./models'); sequelize.sync({ force: true });
+const { sequelize } = require('./models'); sequelize.sync({ force: true });
 // Middleware
 app.use(upload.array("images", 4));
 app.use(cors());
