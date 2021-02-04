@@ -4,7 +4,7 @@ A fork from ayogatot's Review API for my [Review app](https://github.com/b1994mi
 
 ## Deployed version
 
-I will deploy it soon on Heroku.
+This REST API is deployed at [Heroku](https://secure-mountain-83151.herokuapp.com) as per 4 Feb 2021.
 
 ## Review Endpoint
 
