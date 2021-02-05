@@ -95,7 +95,7 @@ exports.updateReviewById = async (req, res) => {
     
     // Delete images in db if params images_toBeDeleted is present.
     if (images_toBeDeleted.length > 0) {
-      data.Images = reviewImgs.filter(({ dataValues: { id } }) => !images_toBeDeleted.includes(`${id}`))
+      data.Images = reviewImgs.filter(({ dataValues: { id } }) => !images_toBeDeleted.includes(id))
       await Images.destroy({
         where: {
           id: {
